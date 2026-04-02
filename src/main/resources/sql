@@ -1,0 +1,33 @@
+CREATE DATABASE mall;
+USE mall;
+
+CREATE TABLE user (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50),
+  password VARCHAR(50)
+);
+
+CREATE TABLE product (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  stock INT,
+  price DECIMAL(10,2),
+  description VARCHAR(100)
+);
+
+#order是保留关键字，不能用
+CREATE TABLE orders (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  status INT,
+  create_time DATETIME,
+  total_amount DECIMAL(10,2)
+);
+
+CREATE TABLE order_item (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  order_id BIGINT,
+  product_id BIGINT,
+  quantity INT,
+  price DECIMAL(10,2)
+);

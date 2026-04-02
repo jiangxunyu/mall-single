@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 1. 基础配置：定义日志存储路径和格式 -->
+    <property name="LOG_HOME" value="log" /> <!-- 生产环境日志根目录 -->
+    <property name="LOG_FILE_NAME" value="app" /> <!-- 日志文件名前缀 -->
+    <property name="ENCODER_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" /> <!-- 日志格式：时间、线程、级别、类名、消息 -->
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 3. 滚动文件输出（按大小+时间切割，保留历史日志） -->
+    <appender name="FILE_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_FILE_NAME}.log</file> <!-- 当前日志文件路径 -->
+
+        <!-- 滚动策略：按大小（100MB）和时间（每天）切割 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 归档文件名：app-2025-10-13.0.log -->
+            <fileNamePattern>${LOG_HOME}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- 单个文件最大100MB -->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 保留30天历史日志 -->
+            <maxHistory>30</maxHistory>
+            <!-- 日志总大小上限2GB，超限自动删除旧日志 -->
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+
+        <!-- 日志格式编码 -->
+        <encoder>
+            <pattern>${ENCODER_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <!-- 过滤：仅输出INFO及以上级别 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <!-- 4. 异步输出（提升性能，避免日志IO阻塞业务线程） -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 异步写入FILE_ROLLING -->
+        <appender-ref ref="FILE_ROLLING" />
+        <!-- 缓冲队列大小 -->
+        <queueSize>512</queueSize>
+        <!-- 队列满时不阻塞业务线程（可能丢失日志，生产环境建议设为false） -->
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <!-- 6. 日志级别配置 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC_FILE" />
+    </root>
+</configuration>
