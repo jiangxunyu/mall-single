@@ -19,6 +19,8 @@ public class RbacAuthorizationManager implements AuthorizationManager<RequestAut
 
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private SecurityProperties securityProperties;
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
@@ -27,6 +29,12 @@ public class RbacAuthorizationManager implements AuthorizationManager<RequestAut
         HttpServletRequest request = context.getRequest();
 
         String url = request.getRequestURI();
+
+        // 🔥 白名单直接通过
+        if (securityProperties.getIgnoreUrls().contains(url)) {
+            return new AuthorizationDecision(true);
+        }
+
         String method = request.getMethod();
 
         Authentication auth = authentication.get();

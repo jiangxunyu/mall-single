@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -24,16 +25,12 @@ public class UserServiceImpl implements UserService {
     private JwtUtil jwtUtil;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
-
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public String login(LoginDTO dto){
-        User user = userMapper.findByUsername(dto.getUsername());
-
-        if(user == null || !user.getPassword().equals(dto.getPassword())){
-            throw new RuntimeException("账号密码错误");
-        }
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -43,6 +40,13 @@ public class UserServiceImpl implements UserService {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        User user = userMapper.findByUsername(dto.getUsername());
+
+//        if(user == null || !user.getPassword().equals(dto.getPassword())){
+//            throw new RuntimeException("账号密码错误");
+//        }
+
         String token = JwtUtil.generateTokenByName(user.getUsername());
 
         // 🔥 Redis控制登录
@@ -64,6 +68,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(User user) {
+        String encode = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encode);
         userMapper.insert(user);
     }
 

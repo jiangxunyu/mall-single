@@ -6,5 +6,5 @@ import java.util.List;
 
 @Mapper
 public interface PermissionMapper {
-    List<String> getByUserId(Long id);
+    List<String> getByUserId(Long userId);
 }

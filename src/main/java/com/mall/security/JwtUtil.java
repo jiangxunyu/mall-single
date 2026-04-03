@@ -6,15 +6,16 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private static final String SECRET = "myVeryLongSecretKeyThatIsAtLeast32CharactersLongForJWT";
+    private static final String SECRET = "mall-user-jwt-secret-key-2026-secure-secure-secure-secure-123456";
 
-    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
     // 30分钟过期
     private static final long EXPIRATION = 30 * 60 * 1000;
@@ -26,7 +27,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(userId.toString())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -34,7 +35,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(username)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -49,7 +50,6 @@ public class JwtUtil {
         );
     }
 
-
     public static String getUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -60,8 +60,9 @@ public class JwtUtil {
     }
 
     public static Claims getClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET)
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }

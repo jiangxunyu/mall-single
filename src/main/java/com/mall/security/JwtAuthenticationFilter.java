@@ -29,17 +29,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Autowired
+    private SecurityProperties securityProperties;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = request.getHeader("Authorization");
+        String uri = request.getRequestURI();
 
-        if (token != null && token.startsWith("Bearer ")) {
+        // 🔥 白名单直接放行
+        if (securityProperties.getIgnoreUrls().contains(uri)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            token = token.substring(7);
+        String token = request.getHeader("token");
+
+        if (token != null) {
 
             String username = JwtUtil.getUsername(token);
 

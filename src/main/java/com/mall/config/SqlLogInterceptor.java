@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
 
 @Intercepts({
     @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
@@ -61,7 +62,12 @@ public class SqlLogInterceptor implements Interceptor {
                         }
                     }
                 }
-                sql = sql.replaceFirst("\\?", value == null ? "null" : "'" + value.toString() + "'");
+                sql = sql.replaceFirst(
+                        "\\?",
+                        value == null
+                                ? "null"
+                                : Matcher.quoteReplacement("'" + value + "'")
+                );
             }
         }
         return sql;
