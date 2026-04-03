@@ -28,6 +28,7 @@ public class SeckillServiceImpl implements SeckillService {
         script.setResultType(Long.class);
     }
 
+    @Override
     public String doSeckill(Long userId, Long productId){
 
         String key = "seckill:stock:" + productId;
@@ -44,7 +45,7 @@ public class SeckillServiceImpl implements SeckillService {
     }
 
     @Override
-    public String doSeckill1(Long userId, Long productId){
+    public String doSeckillLua(Long userId, Long productId){
 
         Long result = redisTemplate.execute(
                 script,
@@ -59,5 +60,10 @@ public class SeckillServiceImpl implements SeckillService {
         orderService.createOrder(userId, productId,1);
 
         return "秒杀成功";
+    }
+
+    @Override
+    public void addStock(String key, Long stock) {
+        redisTemplate.opsForValue().increment(key, stock);
     }
 }

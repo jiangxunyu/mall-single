@@ -4,7 +4,31 @@ USE mall;
 CREATE TABLE user (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50),
-  password VARCHAR(50)
+  password VARCHAR(50),
+  status tinyint(1)
+);
+
+CREATE TABLE role (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
+    code VARCHAR(50)
+);
+
+CREATE TABLE permission (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    url VARCHAR(200),
+    method VARCHAR(10)
+);
+
+CREATE TABLE user_role (
+    user_id BIGINT,
+    role_id BIGINT
+);
+
+CREATE TABLE role_permission (
+    role_id BIGINT,
+    permission_id BIGINT
 );
 
 CREATE TABLE product (

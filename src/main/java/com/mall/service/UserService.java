@@ -8,4 +8,6 @@ public interface UserService {
     String login(LoginDTO dto);
 
     void register(User user);
+
+    User findByUsername(String username);
 }
