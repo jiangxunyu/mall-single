@@ -1,7 +1,7 @@
 package com.mall.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.mall.entity.OrderItem;
+import com.mall.po.entity.OrderItem;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

@@ -1,6 +1,6 @@
 package com.mall.mapper;
 
-import com.mall.entity.Order;
+import com.mall.po.entity.Order;
 
 public interface OrderMapper {
 

@@ -1,8 +1,8 @@
 package com.mall.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.mall.entity.Product;
-import com.mall.entity.ProductDoc;
+import com.mall.po.entity.Product;
+import com.mall.po.vo.ProductDoc;
 import com.mall.es.ProductEsRepository;
 import com.mall.mapper.ProductMapper;
 import com.mall.service.ProductService;

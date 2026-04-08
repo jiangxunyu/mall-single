@@ -1,6 +1,6 @@
 package com.mall.security;
 
-import com.mall.entity.User;
+import com.mall.po.entity.User;
 import com.mall.mapper.PermissionMapper;
 import com.mall.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;

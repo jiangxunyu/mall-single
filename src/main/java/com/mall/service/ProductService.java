@@ -1,6 +1,6 @@
 package com.mall.service;
 
-import com.mall.entity.Product;
+import com.mall.po.entity.Product;
 
 import java.util.List;
 

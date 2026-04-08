@@ -2,8 +2,8 @@ package com.mall.util;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
-import com.mall.entity.Product;
-import com.mall.entity.ProductDto;
+import com.mall.po.entity.Product;
+import com.mall.po.dto.ProductDto;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;

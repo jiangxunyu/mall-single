@@ -1,7 +1,7 @@
 package com.mall.es;
 
-import com.mall.entity.Product;
-import com.mall.entity.ProductDoc;
+import com.mall.po.entity.Product;
+import com.mall.po.vo.ProductDoc;
 import com.mall.mapper.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,10 +1,10 @@
 package com.mall.controller;
 
 import com.alibaba.excel.EasyExcel;
-import com.mall.entity.Product;
-import com.mall.entity.ProductDoc;
-import com.mall.entity.ProductDto;
-import com.mall.entity.Result;
+import com.mall.po.entity.Product;
+import com.mall.po.vo.ProductDoc;
+import com.mall.po.dto.ProductDto;
+import com.mall.po.vo.Result;
 import com.mall.es.ProductEsRepository;
 import com.mall.service.ProductService;
 import com.mall.util.ProductExcelListener;

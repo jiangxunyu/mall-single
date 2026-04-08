@@ -1,6 +1,6 @@
 package com.mall.es;
 
-import com.mall.entity.ProductDoc;
+import com.mall.po.vo.ProductDoc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

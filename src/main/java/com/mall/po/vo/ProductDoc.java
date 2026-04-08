@@ -1,4 +1,4 @@
-package com.mall.entity;
+package com.mall.po.vo;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

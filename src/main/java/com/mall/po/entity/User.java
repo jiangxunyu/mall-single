@@ -1,4 +1,4 @@
-package com.mall.entity;
+package com.mall.po.entity;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
 package com.mall.service.impl;
 
-import com.mall.entity.Order;
-import com.mall.entity.OrderItem;
-import com.mall.entity.Product;
+import com.mall.po.entity.Order;
+import com.mall.po.entity.OrderItem;
+import com.mall.po.entity.Product;
 import com.mall.mapper.OrderItemMapper;
 import com.mall.mapper.OrderMapper;
 import com.mall.mapper.ProductMapper;

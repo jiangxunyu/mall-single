@@ -1,6 +1,6 @@
 package com.mall.es;
 
-import com.mall.entity.ProductDoc;
+import com.mall.po.vo.ProductDoc;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 

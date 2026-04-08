@@ -1,8 +1,11 @@
 package com.mall.service.impl;
 
-import com.mall.entity.LoginDTO;
-import com.mall.entity.User;
+import com.mall.mapper.PermissionMapper;
 import com.mall.mapper.UserMapper;
+import com.mall.mapper.UserRoleMapper;
+import com.mall.po.dto.LoginDTO;
+import com.mall.po.dto.UserRoleDTO;
+import com.mall.po.entity.User;
 import com.mall.security.JwtUtil;
 import com.mall.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -29,6 +34,10 @@ public class UserServiceImpl implements UserService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+    @Autowired
+    private PermissionMapper permissionMapper;
 
     public String login(LoginDTO dto){
 
@@ -77,5 +86,22 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         User user = userMapper.findByUsername(username);
         return user;
+    }
+
+    @Override
+    @Transactional
+    public void assignRole(UserRoleDTO dto) {
+        // 先删旧关系
+        userRoleMapper.deleteByUserId(dto.getUserId());
+
+        // 批量插入
+        for (Long roleId : dto.getRoleIds()) {
+            userRoleMapper.insert(dto.getUserId(), roleId);
+        }
+    }
+
+    @Override
+    public List<String> getUserPermissions(Long userId) {
+        return permissionMapper.getByUserId(userId);
     }
 }

@@ -1,6 +1,6 @@
 package com.mall.controller;
 
-import com.mall.entity.Result;
+import com.mall.po.vo.Result;
 import com.mall.security.JwtUtil;
 import com.mall.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;

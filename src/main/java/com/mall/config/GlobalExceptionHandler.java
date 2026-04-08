@@ -1,6 +1,6 @@
 package com.mall.config;
 
-import com.mall.entity.Result;
+import com.mall.po.vo.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.slf4j.Logger;

@@ -1,6 +1,6 @@
 package com.mall.mapper;
 
-import com.mall.entity.User;
+import com.mall.po.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
