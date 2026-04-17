@@ -13,4 +13,7 @@ public class Permission {
     private String name;
     private String url;
     private String method;
+    private String code;
+    private String type;
+    private Long parentId;
 }
