@@ -29,3 +29,4 @@ security:
   ignore-urls:
     - /user/login
     - /user/register
+    - /user/logout

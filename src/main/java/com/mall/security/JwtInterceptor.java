@@ -2,7 +2,6 @@ package com.mall.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,26 +15,20 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-
-        if(request.getRequestURI().contains("/user/login")){
-            return true;
-        }
-        if (request.getRequestURI().contains("/user/register")){
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        String uri = request.getRequestURI();
+        if (uri.contains("/user/login") || uri.contains("/user/register")) {
             return true;
         }
 
         String token = request.getHeader("token");
-
-        if(token == null){
+        if (token == null || token.isBlank()) {
             throw new RuntimeException("未登录");
         }
 
-        jwtUtil.parseToken(token);
-
+        // 登录 token 的 subject 是 username，这里按 username 校验
+        JwtUtil.getUsername(token);
         return true;
     }
 }

@@ -18,38 +18,37 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @PostMapping("/login")
-    public Result login(@RequestBody LoginDTO dto){
+    public Result login(@RequestBody LoginDTO dto) {
         return Result.success(userService.login(dto));
     }
 
     @PostMapping("/register")
-    public Result register(@RequestBody User user){
+    public Result register(@RequestBody User user) {
         userService.register(user);
         return Result.success("注册成功");
     }
 
     @PostMapping("/admin/kickout/{userId}")
     public Result kickOut(@PathVariable Long userId) {
-        String key = "user:token:" + userId;
-        redisTemplate.delete(key);
+        redisTemplate.delete("user:token:" + userId);
         return Result.success("用户已被踢出");
     }
 
     @PostMapping("/logout")
     public Result logout(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
-        if (header != null) {
-            String token = header.substring(7);
-            String username = JwtUtil.getClaims(token).getSubject();
+        String token = request.getHeader("token");
+        if (token != null && !token.isBlank()) {
+            String username = JwtUtil.getUsername(token);
             User user = userService.findByUsername(username);
-
-            redisTemplate.delete("user:token:" + user.getId());
+            if (user != null) {
+                redisTemplate.delete("user:token:" + user.getId());
+            }
         }
-
         return Result.success("退出登录成功");
     }
 

@@ -1,9 +1,9 @@
 package com.mall.controller;
 
-import com.mall.po.vo.ProductDoc;
-import com.mall.po.vo.Result;
 import com.mall.es.EsSearchService;
 import com.mall.es.ProductEsRepository;
+import com.mall.po.vo.ProductDoc;
+import com.mall.po.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;

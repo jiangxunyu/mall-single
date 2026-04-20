@@ -17,38 +17,40 @@ import java.util.function.Supplier;
 @Component
 public class RbacAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
+    private static final String SUPER_ADMIN = "SUPER_ADMIN";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
     @Autowired
     private PermissionService permissionService;
+
     @Autowired
     private SecurityProperties securityProperties;
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
                                        RequestAuthorizationContext context) {
-
         HttpServletRequest request = context.getRequest();
-
         String url = request.getRequestURI();
 
-        // 🔥 白名单直接通过
         if (securityProperties.getIgnoreUrls().contains(url)) {
             return new AuthorizationDecision(true);
         }
 
         String method = request.getMethod();
-
         Authentication auth = authentication.get();
-
         if (auth == null || !auth.isAuthenticated()) {
             return new AuthorizationDecision(false);
         }
 
-        // 当前用户权限
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 
-        // 数据库权限（可缓存）
-        List<String> permissions = permissionService.getPermissions(url, method);
+        boolean isAdmin = authorities.stream().anyMatch(a ->
+                SUPER_ADMIN.equals(a.getAuthority()) || ROLE_ADMIN.equals(a.getAuthority()));
+        if (isAdmin) {
+            return new AuthorizationDecision(true);
+        }
 
+        List<String> permissions = permissionService.getPermissions(url, method);
         for (GrantedAuthority authority : authorities) {
             if (permissions.contains(authority.getAuthority())) {
                 return new AuthorizationDecision(true);
@@ -56,10 +58,5 @@ public class RbacAuthorizationManager implements AuthorizationManager<RequestAut
         }
 
         return new AuthorizationDecision(false);
-    }
-
-    @Override
-    public void verify(Supplier<Authentication> authentication, RequestAuthorizationContext object) {
-        AuthorizationManager.super.verify(authentication, object);
     }
 }

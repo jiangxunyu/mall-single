@@ -3,15 +3,23 @@
 <mapper namespace="com.mall.mapper.OrderMapper">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO orders(user_id, status, total_amount,create_time)
-        VALUES (#{userId}, #{status},#{totalAmount}, #{createTime})
+        INSERT INTO orders(user_id, status, total_amount, create_time)
+        VALUES (#{userId}, #{status}, #{totalAmount}, #{createTime})
     </insert>
 
     <update id="closeTimeoutOrders">
         UPDATE orders
         SET status = 3
         WHERE status = 0
-        AND create_time &lt; NOW() - INTERVAL 30 MINUTE
+          AND create_time &lt; NOW() - INTERVAL 30 MINUTE
+    </update>
+
+    <update id="update">
+        UPDATE orders
+        SET status = #{status},
+            total_amount = #{totalAmount},
+            create_time = #{createTime}
+        WHERE id = #{id}
     </update>
 
 </mapper>

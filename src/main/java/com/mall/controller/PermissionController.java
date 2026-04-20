@@ -1,12 +1,12 @@
 package com.mall.controller;
 
+import com.mall.po.entity.Permission;
 import com.mall.po.vo.Result;
 import com.mall.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Permission;
 import java.util.List;
 
 @RestController

@@ -1,5 +1,6 @@
 package com.mall.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mall.po.entity.User;
 import com.mall.mapper.UserMapper;
 import jakarta.servlet.FilterChain;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -64,8 +67,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     // ❌ token不一致 → 被踢下线
                     if (redisToken == null || !redisToken.equals(token)) {
-                        response.setStatus(401);
-                        response.getWriter().write("账号已在其他设备登录");
+                        // 设置响应格式和状态码
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+
+                        // 构建统一的JSON响应体
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("code", 401);
+                        result.put("message", "账号已退出或在其他设备登录"); // 可根据具体异常类型细化提示
+                        result.put("data", null);
+
+                        response.getWriter().write(new ObjectMapper().writeValueAsString(result));
                         return;
                     }
 

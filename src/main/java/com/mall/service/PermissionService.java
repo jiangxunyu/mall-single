@@ -1,13 +1,13 @@
 package com.mall.service;
 
-import java.security.Permission;
+import com.mall.po.entity.Permission;
+
 import java.util.List;
 
 public interface PermissionService {
     List<String> getPermissions(String url, String method);
 
-    void addPermission(Permission p);
+    void addPermission(Permission permission);
 
     List<Permission> list();
-
 }
