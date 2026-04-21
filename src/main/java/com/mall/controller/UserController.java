@@ -6,11 +6,14 @@ import com.mall.po.entity.User;
 import com.mall.po.vo.Result;
 import com.mall.security.JwtUtil;
 import com.mall.service.UserService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -35,7 +38,16 @@ public class UserController {
 
     @PostMapping("/admin/kickout/{userId}")
     public Result kickOut(@PathVariable Long userId) {
-        redisTemplate.delete("user:token:" + userId);
+        String key = "user:token:" + userId;
+        String token = redisTemplate.opsForValue().get(key);
+        if (token != null && !token.isBlank()) {
+            Claims claims = JwtUtil.getClaims(token);
+            long remainMs = claims.getExpiration().getTime() - System.currentTimeMillis();
+            if (remainMs > 0) {
+                redisTemplate.opsForValue().set("token:blacklist:" + token, "1", remainMs, TimeUnit.MILLISECONDS);
+            }
+        }
+        redisTemplate.delete(key);
         return Result.success("用户已被踢出");
     }
 
@@ -47,6 +59,12 @@ public class UserController {
             User user = userService.findByUsername(username);
             if (user != null) {
                 redisTemplate.delete("user:token:" + user.getId());
+            }
+
+            Claims claims = JwtUtil.getClaims(token);
+            long remainMs = claims.getExpiration().getTime() - System.currentTimeMillis();
+            if (remainMs > 0) {
+                redisTemplate.opsForValue().set("token:blacklist:" + token, "1", remainMs, TimeUnit.MILLISECONDS);
             }
         }
         return Result.success("退出登录成功");

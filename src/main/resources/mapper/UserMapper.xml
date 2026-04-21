@@ -4,6 +4,6 @@
     <select id="findByUsername" resultType="com.mall.po.entity.User">
         SELECT *
         FROM user
-        WHERE username = #{username}
+        WHERE username = #{username} limit 1
     </select>
 </mapper>

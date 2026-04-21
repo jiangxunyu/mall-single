@@ -8,6 +8,7 @@ import com.mall.po.dto.UserRoleDTO;
 import com.mall.po.entity.User;
 import com.mall.security.JwtUtil;
 import com.mall.service.UserService;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,52 +27,51 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private UserRoleMapper userRoleMapper;
+
     @Autowired
     private PermissionMapper permissionMapper;
 
-    public String login(LoginDTO dto){
-
+    @Override
+    public String login(LoginDTO dto) {
+        // 这一步会走 loadUserByUsername，验证用户是否存在、密码是否正确（Spring Security 自动完成）
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        dto.getUsername(),
-                        dto.getPassword()
-                )
+                new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword())
         );
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = userMapper.findByUsername(dto.getUsername());
-
-//        if(user == null || !user.getPassword().equals(dto.getPassword())){
-//            throw new RuntimeException("账号密码错误");
-//        }
-
         String token = JwtUtil.generateTokenByName(user.getUsername());
 
-        // 🔥 Redis控制登录
+        // Redis 控制单端登录
         String key = "user:token:" + user.getId();
-
-        // 旧token（如果存在）
+        // 旧 token（如果存在）
         String oldToken = redisTemplate.opsForValue().get(key);
-
-        if (oldToken != null) {
-            // 可选：加入黑名单
-            redisTemplate.delete("token:blacklist:" + oldToken);
+        if (oldToken != null && !oldToken.isBlank()) {
+            Claims claims = JwtUtil.getClaims(oldToken);
+            long remainMs = claims.getExpiration().getTime() - System.currentTimeMillis();
+            if (remainMs > 0) {
+                // 可选：加入黑名单，保证旧 token 立即失效
+                redisTemplate.opsForValue().set("token:blacklist:" + oldToken, "1", remainMs, TimeUnit.MILLISECONDS);
+            }
         }
 
-        // 存新token（覆盖旧的 = 踢人🔥）
+        // 存新 token（覆盖旧的 = 踢人）
         redisTemplate.opsForValue().set(key, token, 30, TimeUnit.MINUTES);
-
         return token;
     }
 
@@ -84,8 +84,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        User user = userMapper.findByUsername(username);
-        return user;
+        return userMapper.findByUsername(username);
     }
 
     @Override
@@ -93,7 +92,6 @@ public class UserServiceImpl implements UserService {
     public void assignRole(UserRoleDTO dto) {
         // 先删旧关系
         userRoleMapper.deleteByUserId(dto.getUserId());
-
         // 批量插入
         for (Long roleId : dto.getRoleIds()) {
             userRoleMapper.insert(dto.getUserId(), roleId);
