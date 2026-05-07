@@ -6,4 +6,27 @@
         FROM user
         WHERE username = #{username} limit 1
     </select>
+
+    <select id="selectAllWithPage" resultType="com.mall.po.entity.User">
+        SELECT *
+        FROM user
+        ORDER BY id DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countAll" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user
+    </select>
+
+    <select id="searchByUsernameWithPage" resultType="com.mall.po.entity.User">
+        SELECT *
+        FROM user
+        WHERE username LIKE CONCAT('%', #{username}, '%')
+        ORDER BY id DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countByUsername" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user WHERE username LIKE CONCAT('%', #{username}, '%')
+    </select>
 </mapper>

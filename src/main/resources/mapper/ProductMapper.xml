@@ -29,4 +29,26 @@
         FROM product
         WHERE name like CONCAT('%', #{name}, '%')
     </select>
+
+
+    <select id="selectAllWithPage" resultType="com.mall.po.entity.Product">
+        SELECT *
+        FROM product
+                 LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="searchByNameWithPage" resultType="com.mall.po.entity.Product">
+        SELECT *
+        FROM product
+        WHERE name like CONCAT('%', #{name}, '%')
+            LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countAll" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM product
+    </select>
+
+    <select id="countByName" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM product WHERE name like CONCAT('%', #{name}, '%')
+    </select>
 </mapper>

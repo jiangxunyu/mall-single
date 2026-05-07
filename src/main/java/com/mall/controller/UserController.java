@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping("/login")
     public Result login(@RequestBody LoginDTO dto) {
-        return Result.success(userService.login(dto));
+        return Result.success("操作成功",userService.login(dto));
     }
 
     @PostMapping("/register")
@@ -75,5 +75,12 @@ public class UserController {
     public Result assignRole(@RequestBody UserRoleDTO dto) {
         userService.assignRole(dto);
         return Result.success("分配成功");
+    }
+
+    @GetMapping("/list")
+    public Result list(@RequestParam(defaultValue = "1") Integer pageNum,
+                       @RequestParam(defaultValue = "10") Integer pageSize,
+                       @RequestParam(required = false) String keyword) {
+        return Result.success(userService.listUsers(keyword, pageNum, pageSize));
     }
 }

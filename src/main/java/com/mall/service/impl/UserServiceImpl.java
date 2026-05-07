@@ -19,7 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -101,5 +103,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<String> getUserPermissions(Long userId) {
         return permissionMapper.getByUserId(userId);
+    }
+
+    @Override
+    public Map<String, Object> listUsers(String keyword, Integer pageNum, Integer pageSize) {
+        Map<String, Object> result = new HashMap<>();
+        int offset = (pageNum - 1) * pageSize;
+        if (keyword == null || keyword.isBlank()) {
+            result.put("list", userMapper.selectAllWithPage(offset, pageSize));
+            result.put("total", userMapper.countAll());
+        } else {
+            result.put("list", userMapper.searchByUsernameWithPage(keyword, offset, pageSize));
+            result.put("total", userMapper.countByUsername(keyword));
+        }
+        return result;
     }
 }

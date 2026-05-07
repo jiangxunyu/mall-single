@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -59,5 +60,19 @@ public class ProductServiceImpl implements ProductService {
             return productMapper.selectAll();
         }
         return productMapper.searchByName(name);
+    }
+
+    @Override
+    public Map<String, Object> searchByNameWithPage(String name, Integer pageNum, Integer pageSize) {
+        Map<String, Object> result = new java.util.HashMap<>();
+        if (name == null || name.isBlank()) {
+            result.put("list", productMapper.selectAll());
+            result.put("total", productMapper.countAll());
+        } else {
+            int offset = (pageNum - 1) * pageSize;
+            result.put("list", productMapper.searchByNameWithPage(name, offset, pageSize));
+            result.put("total", productMapper.countByName(name));
+        }
+        return result;
     }
 }

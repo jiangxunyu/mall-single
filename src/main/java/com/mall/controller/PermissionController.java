@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/permission")
 public class PermissionController {
@@ -24,7 +22,9 @@ public class PermissionController {
     }
 
     @GetMapping("/list")
-    public List<Permission> list() {
-        return permissionService.list();
+    public Result list(@RequestParam(defaultValue = "1") Integer pageNum,
+                       @RequestParam(defaultValue = "10") Integer pageSize,
+                       @RequestParam(required = false) String keyword) {
+        return Result.success(permissionService.listPermissions(keyword, pageNum, pageSize));
     }
 }

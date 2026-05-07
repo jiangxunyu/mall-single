@@ -34,6 +34,13 @@ public class ProductController {
         return Result.success(productService.getById(id));
     }
 
+    @GetMapping("/list")
+    public Result list(@RequestParam(defaultValue = "1") Integer pageNum,
+                       @RequestParam(defaultValue = "10") Integer pageSize,
+                       @RequestParam(required = false) String keyword) {
+        return Result.success(productService.searchByNameWithPage(keyword, pageNum, pageSize));
+    }
+
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('PRODUCT_ADD')")
     public Result add(@RequestBody Product product) {

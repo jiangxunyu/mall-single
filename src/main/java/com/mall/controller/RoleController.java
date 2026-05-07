@@ -6,10 +6,7 @@ import com.mall.po.vo.Result;
 import com.mall.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/role")
@@ -30,5 +27,12 @@ public class RoleController {
     public Result assignPermission(@RequestBody RolePermissionDTO dto) {
         roleService.assignPermission(dto);
         return Result.success("分配成功");
+    }
+
+    @GetMapping("/list")
+    public Result list(@RequestParam(defaultValue = "1") Integer pageNum,
+                       @RequestParam(defaultValue = "10") Integer pageSize,
+                       @RequestParam(required = false) String keyword) {
+        return Result.success(roleService.listRoles(keyword, pageNum, pageSize));
     }
 }

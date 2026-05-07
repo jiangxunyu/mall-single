@@ -26,4 +26,13 @@ public interface ProductMapper {
                     @Param("count") Integer count);
 
     List<Product> searchByName(String name);
+
+    List<Product> searchByNameWithPage(@Param("name") String name, @Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
+
+    Integer countAll();
+
+    Integer countByName(String name);
+
+    List<Product> selectAllWithPage(@Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
+
 }

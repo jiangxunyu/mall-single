@@ -6,6 +6,7 @@ import com.mall.po.dto.UserRoleDTO;
 import com.mall.po.entity.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
     String login(LoginDTO dto);
@@ -17,4 +18,7 @@ public interface UserService {
     void assignRole(UserRoleDTO dto);
 
     List<String> getUserPermissions(Long userId);
+
+    Map<String, Object> listUsers(String keyword, Integer pageNum, Integer pageSize);
+
 }

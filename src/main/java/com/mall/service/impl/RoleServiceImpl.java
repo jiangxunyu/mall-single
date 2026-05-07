@@ -8,6 +8,9 @@ import com.mall.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class RoleServiceImpl implements RoleService {
 
@@ -29,5 +32,19 @@ public class RoleServiceImpl implements RoleService {
         for (Long permissionId : dto.getPermissionIds()) {
             rolePermissionMapper.insert(dto.getRoleId(), permissionId);
         }
+    }
+
+    @Override
+    public Map<String, Object> listRoles(String keyword, Integer pageNum, Integer pageSize) {
+        Map<String, Object> result = new HashMap<>();
+        int offset = (pageNum - 1) * pageSize;
+        if (keyword == null || keyword.isBlank()) {
+            result.put("list", roleMapper.selectAllWithPage(offset, pageSize));
+            result.put("total", roleMapper.countAll());
+        } else {
+            result.put("list", roleMapper.searchByNameWithPage(keyword, offset, pageSize));
+            result.put("total", roleMapper.countByName(keyword));
+        }
+        return result;
     }
 }

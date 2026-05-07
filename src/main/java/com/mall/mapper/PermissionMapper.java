@@ -19,4 +19,12 @@ public interface PermissionMapper {
     void insert(Permission permission);
 
     List<Permission> list();
+
+    List<Permission> selectAllWithPage(@Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
+
+    Integer countAll();
+
+    List<Permission> searchByNameWithPage(@Param("name") String name, @Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
+
+    Integer countByName(@Param("name") String name);
 }
